@@ -1,6 +1,4 @@
 
-(require :trivial-http)
-
 (defun move (direction board-string)
   (print-board (move-board direction
 			(read-board board-string))))
