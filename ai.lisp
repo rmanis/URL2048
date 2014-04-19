@@ -1,5 +1,7 @@
 ;;; Heuristics
 
+(in-package :twenty-forty-eight)
+
 (defun fitness (board-list)
   (let* ((zeroes (count 0 board-list))
          ;;(adjacents (count-adjacents board-list))
