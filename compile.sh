@@ -17,12 +17,12 @@ sbcl \
   --eval '(require :lisp-cgi-utils)' \
   --eval '(require :split-sequence)' \
   --eval '(require :cl-ppcre)' \
-  --eval "(defvar *debug* $DEBUG)" \
   --eval '(load "package.lisp")' \
+  --eval '(in-package :twenty-forty-eight)' \
+  --eval "(defvar *debug* $DEBUG)" \
   --eval '(load "board.lisp")' \
   --eval '(load "ai.lisp")' \
   --eval '(load "html.lisp")' \
   --eval '(load "cgi.lisp")' \
-  --eval '(in-package :twenty-forty-eight)' \
   --eval "(sb-ext:save-lisp-and-die \"$DESTINATION/$EXECUTABLE\" :executable t)"
 
