@@ -25,7 +25,9 @@
 (defun make-header ()
   "
 <html>
-  <head></head>
+  <head>
+    <link href=\"style.css\" rel=\"stylesheet\" type=\"text/css\" />
+  </head>
   <body>
 ")
 
@@ -62,7 +64,8 @@
              (make-link "4" (place 4 index board)
                         :player :human
                         :link-class "cpu-move")))
-    (t (format nil "~D" number))))
+    ((not (eql number 0)) (format nil "~D" number))
+    (t "")))
 
 (defun make-sliders (board player)
   (when (eq player 'human)
@@ -71,7 +74,7 @@
            <tr><td>&nbsp;</td><td>~A</td><td>&nbsp;</td></tr>
            <tr><td>~A</td><td>&nbsp;</td><td>~A</td></tr>
            <tr><td>&nbsp;</td><td>~A</td><td>&nbsp;</td></tr>
-           </table>"
+           </table>~%"
               (make-slide-link :up futures)
               (make-slide-link :left futures)
               (make-slide-link :right futures)
