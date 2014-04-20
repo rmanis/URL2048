@@ -2,16 +2,16 @@
 (in-package :twenty-forty-eight)
 
 (defun html-board (board-url-string)
-  (let* ((tokens (split-sequence:split-sequence #\+ board-url-string))
+  (let* ((tokens (split-sequence:split-sequence #\Space board-url-string))
          (count (length tokens)))
     (cond
-      ((< count 18) "invalid url")
-      (t (mapcar #'read-from-string tokens)))
+      ((< count 17) "invalid url")
+      (t (construct-html (mapcar #'read-from-string tokens))))
     ))
 
 (defun construct-html (game-state)
-  (let* ((board (subseq game-state 0 15))
-         (player (nth 16 board))
+  (let* ((board (subseq game-state 0 16))
+         (player (nth 16 game-state))
          (header (make-header))
          (footer (make-footer))
          (html-board (make-html-board board player))
@@ -44,8 +44,9 @@
 (defun make-html-row (row-number board player)
   (with-output-to-string (s)
     (format s "<tr>")
-    (loop for index from (* row-number 4)
-          for num in (row row-number board)
+    (loop with start-index = (* row-number 4)
+          for index from start-index to (+ start-index 3)
+          for num = (nth index board)
           do
        (format s "<td>~A</td>" (make-tile-link board num index player)))
     (format s "</tr>")))
@@ -95,4 +96,3 @@
            "\\(|\\)" (format nil "~S" board) ""))
          (conjoined (cl-ppcre:regex-replace-all " " stripped "+")))
     (format nil "~A+~A" conjoined player)))
-           
