@@ -53,7 +53,7 @@
 
 (defun make-tile-link (board number index player)
   (cond
-    ((and (eq player :cpu)
+    ((and (eq player 'cpu)
           (eql number 0))
      (format nil "~A ~A"
              (make-link "2" (place 2 index board)
