@@ -1,0 +1,10 @@
+
+URL2048
+===
+
+A version of the game 2048, playable by two people.  Game state is stored in
+the query string.
+
+Serve it up on a server with CGI enabled if those are still around.
+
+Edit the corefile path in 2048.cgi and compile.sh to suit your needs.
