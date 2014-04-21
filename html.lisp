@@ -1,7 +1,30 @@
 
 (in-package :twenty-forty-eight)
 
-(defun html-board (board-url-string)
+(defvar *url-style* :letters)
+
+(defun determine-style (board-string)
+  (let ((char (char-code (aref board-string 0))))
+    (cond
+      ((and (<= char (char-code #\9))
+            (>= char (char-code #\0)))
+       :spaces)
+      ((and (<= char (char-code #\Z))
+            (>= char (char-code #\A)))
+       :letters))))
+
+(defun board-powers (board-list)
+  (mapcar (lambda (x) (floor (if (> x 0) (log x 2) 0)))
+          board-list))
+
+(defun html-board-letters (board-url-string)
+  (if (not (eql (length board-url-string) 17))
+      "invalid url"
+      (let* ((board (decode-tiles (subseq board-url-string 0 16)))
+             (player (decode-player (aref board-url-string 16))))
+        (construct-html (append board (list player))))))
+
+(defun html-board-spaces (board-url-string)
   (let* ((tokens (split-sequence:split-sequence #\Space board-url-string))
          (count (length tokens)))
     (cond
@@ -59,10 +82,10 @@
           (eql number 0))
      (format nil "~A ~A"
              (make-link "2" (place 2 index board)
-                        :player :human
+                        :player 'human
                         :link-class "cpu-move")
              (make-link "4" (place 4 index board)
-                        :player :human
+                        :player 'human
                         :link-class "cpu-move")))
     ((not (eql number 0)) (format nil "~D" number))
     (t "")))
@@ -93,9 +116,36 @@
           (encode-board future player)
           text))
 
+(defun encode-tile (number)
+  (if (eql number 0)
+      #\A
+      (code-char
+       (+ (char-code #\A)
+          (floor (log number 2))))))
+
+(defun decode-tile (letter)
+  (if (eql letter #\A)
+      0
+      (expt 2 (- (char-code letter) (char-code #\A)))))
+
+(defun decode-tiles (string)
+  (map 'list #'decode-tile string))
+
+(defun decode-player (char)
+  (case char
+    (#\A 'cpu)
+    (#\B 'human)))
+
 (defun encode-board (board player)
-  (let* ((stripped 
-          (cl-ppcre:regex-replace-all
-           "\\(|\\)" (format nil "~S" board) ""))
-         (conjoined (cl-ppcre:regex-replace-all " " stripped "+")))
-    (format nil "~A+~A" conjoined player)))
+  (case *url-style*
+    (:spaces
+       (let* ((stripped
+               (cl-ppcre:regex-replace-all
+                "\\(|\\)" (format nil "~S" board) ""))
+              (conjoined (cl-ppcre:regex-replace-all " " stripped "+")))
+         (format nil "~A+~A" conjoined player)))
+    (:letters
+       (with-output-to-string (s)
+         (format s "~A~A"
+                 (map 'string #'encode-tile board)
+                 (if (eq player 'human) "B" "A"))))))
